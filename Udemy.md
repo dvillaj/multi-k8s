@@ -289,37 +289,37 @@ origin  git@github.com:dvillaj/multi-k8s.git (push)
 
 https://github.com/travis-ci/travis.rb
 
-- Copy service-account.json into /app
-- cd projects/complexk8s/
+- cd ~/projects/complexk8s/
 - docker run -it -v $(pwd):/app ruby:2.3 sh
 - gem install travis
 - travis login
-- travis encrypt-file /app/service-account.json -r dvillaj/multi-k8s
-- cp service-account.json.enc /app
-- rm /app/service-account.json
+- cd /app
+- travis encrypt-file service-account.json -r dvillaj/multi-k8s
+- rm service-account.json
+- exit
 
 
 ```
-$ cd projects/complexk8s/
+$ cd ~/projects/complexk8s/
 $ docker run -it -v $(pwd):/app ruby:2.3 sh
 # gem install travis
-Fetching addressable-2.4.0.gem
-Fetching highline-1.7.10.gem
-Fetching net-http-pipeline-1.0.1.gem
-Fetching faraday-0.17.3.gem
+Fetching backports-3.16.1.gem
 Fetching net-http-persistent-2.9.4.gem
 Fetching multipart-post-2.1.1.gem
+Fetching faraday-0.17.3.gem
 Fetching faraday_middleware-0.14.0.gem
-Fetching multi_json-1.14.1.gem
-Fetching backports-3.16.1.gem
-Fetching gh-0.15.1.gem
+Fetching highline-1.7.10.gem
 Fetching launchy-2.4.3.gem
+Fetching net-http-pipeline-1.0.1.gem
+Fetching multi_json-1.14.1.gem
+Fetching addressable-2.4.0.gem
+Fetching gh-0.15.1.gem
+Fetching ethon-0.12.0.gem
 Fetching typhoeus-0.8.0.gem
-Fetching travis-1.8.10.gem
+Fetching pusher-client-0.6.2.gem
 Fetching ffi-1.12.2.gem
 Fetching websocket-1.2.8.gem
-Fetching pusher-client-0.6.2.gem
-Fetching ethon-0.12.0.gem
+Fetching travis-1.8.10.gem
 Successfully installed multipart-post-2.1.1
 Successfully installed faraday-0.17.3
 Successfully installed faraday_middleware-0.14.0
@@ -350,27 +350,21 @@ Try running with --github-token or --auto if you don't want to enter your passwo
 Username: dvillaj@gmail.com
 Password for dvillaj@gmail.com: **************
 Successfully logged in as dvillaj!
-# ls /app
-GoogleCloud.md  Readme.md  Udemy.md  client  deploy.sh  images  k8s  server  service-account.json  worker
-
-# travis encrypt-file /app/service-account.json -r dvillaj/multi-k8s
-encrypting /app/service-account.json for dvillaj/multi-k8s
+# cd /app
+# travis encrypt-file service-account.json -r dvillaj/multi-k8s
+encrypting service-account.json for dvillaj/multi-k8s
 storing result as service-account.json.enc
 storing secure env variables for decryption
 
 Please add the following to your build script (before_install stage in your .travis.yml, for instance):
 
-    openssl aes-256-cbc -K $encrypted_42099b4af021_key -iv $encrypted_42099b4af021_iv -in service-account.json.enc -out /app/service-account.json -d
+    openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
 
 Pro Tip: You can add it automatically by running with --add.
 
 Make sure to add service-account.json.enc to the git repository.
-Make sure not to add /app/service-account.json to the git repository.
+Make sure not to add service-account.json to the git repository.
 Commit all changes to your .travis.yml.
-# ls
-app  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  service-account.json.enc  srv  sys  tmp  usr  var
-# cp service-account.json.enc /app
+# rm service-account.json
 # exit
-
-$ rm service-account.json
 ```
