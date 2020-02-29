@@ -7,6 +7,12 @@
     - Create cluster
         - Name
         - Machine Type: 1 CPU, 3.75 Gb
+ - IAM & Admin -> Service Account
+    - Create Service Account
+        - name: travis-deployer
+        - role: Kubernetes Engine Admin
+        - Create JSON Key
+
 
 ## Clean up
 
