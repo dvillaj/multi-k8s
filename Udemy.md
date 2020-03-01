@@ -368,3 +368,353 @@ Commit all changes to your .travis.yml.
 # rm service-account.json
 # exit
 ```
+
+## Access Google Cloud from Google
+
+```
+gcloud config set project multi-269504
+gcloud config set compute/zone europe-west1-b
+gcloud container clusters get-credentials multi-cluster
+```
+
+## Installing Google Cloud 
+
+- export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+- curl https://sdk.cloud.google.com | bash > /dev/null;
+- source $HOME/google-cloud-sdk/path.bash.inc
+- gcloud components update kubectl
+
+## Access Google Cloud from local
+
+```
+source $HOME/google-cloud-sdk/path.bash.inc
+gcloud auth activate-service-account --key-file ~/projects/complexk8s/service-account.json
+gcloud config set project multi-269504
+gcloud config set compute/zone europe-west1-b
+gcloud container clusters get-credentials multi-cluster
+```
+
+
+## Creating a secret on Google Cloud
+
+```
+$ export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+$ curl https://sdk.cloud.google.com | bash > /dev/null;
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   443  100   443    0     0   3434      0 --:--:-- --:--:-- --:--:--  3407
+######################################################################## 100.0%
+which curl
+curl -# -f https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+######################################################################## 100.0%
+mkdir -p /home/vagrant
+tar -C /home/vagrant -zxvf /tmp/tmp.FyqtGlElcL/google-cloud-sdk.tar.gz
+/home/vagrant/google-cloud-sdk/install.sh
+
+
+Your current Cloud SDK version is: 282.0.0
+Installing components from version: 282.0.0
+
++-----------------------------------------------------------------------------+
+|                     These components will be installed.                     |
++-----------------------------------------------------+------------+----------+
+|                         Name                        |  Version   |   Size   |
++-----------------------------------------------------+------------+----------+
+| BigQuery Command Line Tool                          |     2.0.54 |  < 1 MiB |
+| BigQuery Command Line Tool (Platform Specific)      |     2.0.53 |  < 1 MiB |
+| Cloud SDK Core Libraries (Platform Specific)        | 2020.02.14 |  < 1 MiB |
+| Cloud Storage Command Line Tool                     |       4.47 |  3.6 MiB |
+| Cloud Storage Command Line Tool (Platform Specific) |       4.47 |  < 1 MiB |
+| Default set of gcloud commands                      |            |          |
+| anthoscli                                           |     0.0.13 | 23.9 MiB |
+| anthoscli                                           |            |          |
+| gcloud cli dependencies                             | 2018.08.03 |  8.6 MiB |
++-----------------------------------------------------+------------+----------+
+
+For the latest full release notes, please visit:
+  https://cloud.google.com/sdk/release_notes
+
+#============================================================#
+#= Creating update staging area                             =#
+#============================================================#
+#= Installing: BigQuery Command Line Tool                   =#
+#============================================================#
+#= Installing: BigQuery Command Line Tool (Platform Spec... =#
+#============================================================#
+#= Installing: Cloud SDK Core Libraries (Platform Specific) =#
+#============================================================#
+#= Installing: Cloud Storage Command Line Tool              =#
+#============================================================#
+#= Installing: Cloud Storage Command Line Tool (Platform... =#
+#============================================================#
+#= Installing: Default set of gcloud commands               =#
+#============================================================#
+#= Installing: anthoscli                                    =#
+#============================================================#
+#= Installing: anthoscli                                    =#
+#============================================================#
+#= Installing: gcloud cli dependencies                      =#
+#============================================================#
+#= Creating backup and activating new installation          =#
+#============================================================#
+
+Performing post processing steps...
+.......................................................................................................................done.
+
+Update done!
+
+$ source $HOME/google-cloud-sdk/path.bash.inc
+$ gcloud components update kubectl
+
+
+Your current Cloud SDK version is: 282.0.0
+Installing components from version: 282.0.0
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                 These components will be installed.                 │
+├─────────────────────┬────────────────────────┬──────────────────────┤
+│         Name        │        Version         │         Size         │
+├─────────────────────┼────────────────────────┼──────────────────────┤
+│ kubectl             │                1.14.10 │             74.6 MiB │
+│ kubectl             │             2020.02.07 │              < 1 MiB │
+└─────────────────────┴────────────────────────┴──────────────────────┘
+
+For the latest full release notes, please visit:
+  https://cloud.google.com/sdk/release_notes
+
+╔════════════════════════════════════════════════════════════╗
+╠═ Creating update staging area                             ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: kubectl                                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: kubectl                                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Creating backup and activating new installation          ═╣
+╚════════════════════════════════════════════════════════════╝
+
+Performing post processing steps...done.
+
+Update done!
+
+$ gcloud auth activate-service-account --key-file ~/projects/complexk8s/service-account.json
+Activated service account credentials for: [travis-deployer@multi-269504.iam.gserviceaccount.com]
+$ gcloud config set project multi-269504
+Updated property [core/project].
+WARNING: You do not appear to have access to project [multi-269504] or it does not exist.
+$ gcloud config set compute/zone europe-west1-b
+Updated property [compute/zone].
+$ gcloud container clusters get-credentials multi-cluster
+Fetching cluster endpoint and auth data.
+kubeconfig entry generated for multi-cluster.
+$ kubectl get pods
+No resources found.
+$ kubectl create secret generic pgpassword --from-literal PGPASSWORD=12345asfdPRO
+secret/pgpassword created
+$ kubectl get secrets
+NAME                  TYPE                                  DATA   AGE
+default-token-4sb65   kubernetes.io/service-account-token   3      2d1h
+pgpassword            Opaque                                1      23s
+$
+```
+
+## Installing Helm
+
+```
+Welcome to Cloud Shell! Type "help" to get started.
+Your Cloud Platform project in this session is set to multi-269504.
+Use “gcloud config set project [PROJECT_ID]” to change to a different project.
+
+dvillaj_docker@cloudshell:~ (multi-269504)$ chmod 700 get_helm.sh
+dvillaj_docker@cloudshell:~ (multi-269504)$ ./get_helm.sh
+Error: Get http://localhost:8080/api/v1/namespaces/kube-system/pods?labelSelector=app%3Dhelm%2Cname%3Dtiller: dial tcp 127.0.0.1:8080: connect: connection refused
+Helm v3.1.1 is available. Changing from version .
+Downloading https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz
+Preparing to install helm into /usr/local/bin
+helm installed into /usr/local/bin/helm
+dvillaj_docker@cloudshell:~ (multi-269504)$
+
+```
+
+## Create a Service Account and Authorize it
+
+```
+$ kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   3d2h
+kube-node-lease   Active   3d2h
+kube-public       Active   3d2h
+kube-system       Active   3d2h
+
+$ kubectl create serviceaccount --namespace kube-system tiller
+serviceaccount/tiller created
+$ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+clusterrolebinding.rbac.authorization.k8s.io/tiller-cluster-rule created
+
+$ kubectl get ClusterRoleBindings
+NAME                                                   AGE
+cluster-admin                                          3d3h
+cluster-autoscaler-updateinfo                          3d3h
+event-exporter-rb                                      3d3h
+gce:beta:kubelet-certificate-bootstrap                 3d3h
+gce:beta:kubelet-certificate-rotation                  3d3h
+gce:cloud-provider                                     3d3h
+heapster-binding                                       3d3h
+kube-apiserver-kubelet-api-admin                       3d3h
+kubelet-bootstrap                                      3d3h
+kubelet-bootstrap-certificate-bootstrap                3d3h
+kubelet-bootstrap-node-bootstrapper                    3d3h
+kubelet-cluster-admin                                  3d3h
+metrics-server:system:auth-delegator                   3d3h
+npd-binding                                            3d3h
+stackdriver:fluentd-gcp                                3d3h
+stackdriver:metadata-agent                             3d3h
+system:aws-cloud-provider                              3d3h
+system:basic-user                                      3d3h
+system:controller:attachdetach-controller              3d3h
+system:controller:certificate-controller               3d3h
+system:controller:clusterrole-aggregation-controller   3d3h
+system:controller:cronjob-controller                   3d3h
+system:controller:daemon-set-controller                3d3h
+system:controller:deployment-controller                3d3h
+system:controller:disruption-controller                3d3h
+system:controller:endpoint-controller                  3d3h
+system:controller:expand-controller                    3d3h
+system:controller:generic-garbage-collector            3d3h
+system:controller:horizontal-pod-autoscaler            3d3h
+system:controller:job-controller                       3d3h
+system:controller:namespace-controller                 3d3h
+system:controller:node-controller                      3d3h
+system:controller:persistent-volume-binder             3d3h
+system:controller:pod-garbage-collector                3d3h
+system:controller:pv-protection-controller             3d3h
+system:controller:pvc-protection-controller            3d3h
+system:controller:replicaset-controller                3d3h
+system:controller:replication-controller               3d3h
+system:controller:resourcequota-controller             3d3h
+system:controller:route-controller                     3d3h
+system:controller:service-account-controller           3d3h
+system:controller:service-controller                   3d3h
+system:controller:statefulset-controller               3d3h
+system:controller:ttl-controller                       3d3h
+system:discovery                                       3d3h
+system:kube-controller-manager                         3d3h
+system:kube-dns                                        3d3h
+system:kube-dns-autoscaler                             3d3h
+system:kube-scheduler                                  3d3h
+system:metrics-server                                  3d3h
+system:node                                            3d3h
+system:node-proxier                                    3d3h
+system:public-info-viewer                              3d3h
+system:volume-scheduler                                3d3h
+tiller-cluster-rule                                    37s
+
+$ kubectl get ServiceAccount
+NAME      SECRETS   AGE
+default   1         3d3h
+
+$ kubectl get ServiceAccount --namespace kube-system
+NAME                                 SECRETS   AGE
+attachdetach-controller              1         3d3h
+certificate-controller               1         3d3h
+cloud-provider                       1         3d3h
+clusterrole-aggregation-controller   1         3d3h
+cronjob-controller                   1         3d3h
+daemon-set-controller                1         3d3h
+default                              1         3d3h
+deployment-controller                1         3d3h
+disruption-controller                1         3d3h
+endpoint-controller                  1         3d3h
+event-exporter-sa                    1         3d3h
+expand-controller                    1         3d3h
+fluentd-gcp                          1         3d3h
+fluentd-gcp-scaler                   1         3d3h
+generic-garbage-collector            1         3d3h
+heapster                             1         3d3h
+horizontal-pod-autoscaler            1         3d3h
+job-controller                       1         3d3h
+kube-dns                             1         3d3h
+kube-dns-autoscaler                  1         3d3h
+metadata-agent                       1         3d3h
+metadata-proxy                       1         3d3h
+metrics-server                       1         3d3h
+namespace-controller                 1         3d3h
+node-controller                      1         3d3h
+persistent-volume-binder             1         3d3h
+pod-garbage-collector                1         3d3h
+prometheus-to-sd                     1         3d3h
+pv-protection-controller             1         3d3h
+pvc-protection-controller            1         3d3h
+replicaset-controller                1         3d3h
+replication-controller               1         3d3h
+resourcequota-controller             1         3d3h
+service-account-controller           1         3d3h
+service-controller                   1         3d3h
+statefulset-controller               1         3d3h
+tiller                               1         2m47s
+ttl-controller                       1         3d3h
+$
+```
+
+
+## Ingress-Nginx with Helm
+
+
+```
+$ helm install my-nginx stable/nginx-ingress --set rbac.create=true
+Error: failed to download "stable/nginx-ingress" (hint: running `helm repo update` may help)
+
+$ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+"stable" has been added to your repositories
+$ helm install my-nginx stable/nginx-ingress --set rbac.create=true
+NAME: my-nginx
+LAST DEPLOYED: Sun Mar  1 08:21:37 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+The nginx-ingress controller has been installed.
+It may take a few minutes for the LoadBalancer IP to be available.
+You can watch the status by running 'kubectl --namespace default get services -o wide -w my-nginx-nginx-ingress-controller'
+
+An example Ingress that makes use of the controller:
+
+  apiVersion: extensions/v1beta1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    name: example
+    namespace: foo
+  spec:
+    rules:
+      - host: www.example.com
+        http:
+          paths:
+            - backend:
+                serviceName: exampleService
+                servicePort: 80
+              path: /
+    # This section is only required if TLS is to be enabled for the Ingress
+    tls:
+        - hosts:
+            - www.example.com
+          secretName: example-tls
+
+If TLS is enabled for the Ingress, a Secret containing the certificate and key must also be provided:
+
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: example-tls
+    namespace: foo
+  data:
+    tls.crt: <base64 encoded cert>
+    tls.key: <base64 encoded key>
+  type: kubernetes.io/tls
+  
+$ kubectl --namespace default get services -o wide -w my-nginx-nginx-ingress-controller
+NAME                                TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)                      AGE    SELECTOR
+my-nginx-nginx-ingress-controller   LoadBalancer   10.91.7.173   35.233.101.34   80:32588/TCP,443:31798/TCP   115s   app=nginx-ingress,component=controller,release=my-nginx
+
+```
