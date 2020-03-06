@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: k8s-multi-com-tls
+spec:
+  secretName: k8s-multi-com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: fib-generator.xyz
+  dnsNames:
+    - fib-generator.xyz
+    - www.fib-generator.xyz
+  acme:
+    config:
+      - http01:
+          ingressClass: nginx
+        domains:
+          - fib-generator.xyz
+          - www.fib-generator.xyz

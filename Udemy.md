@@ -718,3 +718,158 @@ NAME                                TYPE           CLUSTER-IP    EXTERNAL-IP    
 my-nginx-nginx-ingress-controller   LoadBalancer   10.91.7.173   35.233.101.34   80:32588/TCP,443:31798/TCP   115s   app=nginx-ingress,component=controller,release=my-nginx
 
 ```
+
+## 
+
+### Domain Name Setup
+
+- Buy a domain in namecheap.com
+- DNS Setting
+    - Add A Record:
+        @ -> IP ADDRESS (From Google Cloud / Kubernetes Engine / Services & Ingres)
+    - Add CName Record:
+        www -> fib-generator.xyz.
+
+### Install a Cert Manager with Helm
+
+```
+D:\Projects\docker-udemy>ssh -t vagrant@localhost -p 2222
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-76-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri Mar  6 16:45:17 UTC 2020
+
+  System load:  0.0                Processes:           102
+  Usage of /:   10.9% of 61.80GB   Users logged in:     0
+  Memory usage: 6%                 IP address for eth0: 10.0.2.15
+  Swap usage:   0%
+
+ * Multipass 1.0 is out! Get Ubuntu VMs on demand on your Linux, Windows or
+   Mac. Supports cloud-init for fast, local, cloud devops simulation.
+
+     https://multipass.run/
+
+ * Latest Kubernetes 1.18 beta is now available for your laptop, NUC, cloud
+   instance or Raspberry Pi, with automatic updates to the final GA release.
+
+     sudo snap install microk8s --channel=1.18/beta --classic
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+Last login: Fri Mar  6 16:22:01 2020 from 10.0.2.2
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-76-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri Mar  6 16:45:17 UTC 2020
+
+  System load:  0.0                Processes:           102
+  Usage of /:   10.9% of 61.80GB   Users logged in:     0
+  Memory usage: 6%                 IP address for eth0: 10.0.2.15
+  Swap usage:   0%
+
+ * Multipass 1.0 is out! Get Ubuntu VMs on demand on your Linux, Windows or
+   Mac. Supports cloud-init for fast, local, cloud devops simulation.
+
+     https://multipass.run/
+
+ * Latest Kubernetes 1.18 beta is now available for your laptop, NUC, cloud
+   instance or Raspberry Pi, with automatic updates to the final GA release.
+
+     sudo snap install microk8s --channel=1.18/beta --classic
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+Last login: Fri Mar  6 16:22:01 2020 from 10.0.2.2
+
+$ source $HOME/google-cloud-sdk/path.bash.inc
+$ gcloud auth activate-service-account --key-file ~/projects/complexk8s/service-account.json
+Activated service account credentials for: [travis-deployer@multi-269504.iam.gserviceaccount.com]
+
+
+Updates are available for some Cloud SDK components.  To install them,
+please run:
+  $ gcloud components update
+
+$ gcloud config set project multi-269504
+Updated property [core/project].
+WARNING: You do not appear to have access to project [multi-269504] or it does not exist.
+$ gcloud config set compute/zone europe-west1-b
+Updated property [compute/zone].
+$ gcloud container clusters get-credentials multi-cluster
+Fetching cluster endpoint and auth data.
+kubeconfig entry generated for multi-cluster.
+$ kubectl apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/v0.13.1/deploy/manifests/00-crds.yaml
+customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io created
+$ kubectl create namespace cert-manager
+namespace/cert-manager created
+$ helm repo add jetstack https://charts.jetstack.io
+"jetstack" has been added to your repositories
+$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "jetstack" chart repository
+...Successfully got an update from the "stable" chart repository
+Update Complete. ⎈ Happy Helming!⎈
+$ helm install \
+>   cert-manager jetstack/cert-manager \
+>   --namespace cert-manager \
+>   --version v0.13.1
+
+NAME: cert-manager
+LAST DEPLOYED: Fri Mar  6 16:48:18 2020
+NAMESPACE: cert-manager
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+cert-manager has been deployed successfully!
+
+In order to begin issuing certificates, you will need to set up a ClusterIssuer
+or Issuer resource (for example, by creating a 'letsencrypt-staging' issuer).
+
+More information on the different types of issuers and how to configure them
+can be found in our documentation:
+
+https://docs.cert-manager.io/en/latest/reference/issuers.html
+
+For information on how to configure cert-manager to automatically provision
+Certificates for Ingress resources, take a look at the `ingress-shim`
+documentation:
+
+https://docs.cert-manager.io/en/latest/reference/ingress-shim.html
+$
+$ kubectl get pods --namespace cert-manager
+NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-6559f74744-qr8tn              1/1     Running   0          15s
+cert-manager-cainjector-795c46858f-sgf2x   1/1     Running   0          15s
+cert-manager-webhook-5dfc77cd74-gmxdq      0/1     Running   0          15s
+$
+```
